@@ -13,7 +13,7 @@ const CONTACT_EMAIL = 'mailto:douglasbersot18@gmail.com';
 
 webpush.setVapidDetails(CONTACT_EMAIL, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
 
-const SUBSCRIPTIONS_URL = 'https://playflixtv.online/api/subscriptions.json';
+const SUBSCRIPTIONS_URL = 'https://playflixtv.online/api/subscriptions_notifications_push/subscriptions.json';
 
 app.post('/send-push', async (req, res) => {
     const { title, body, icon, badge, image, url, actions } = req.body;
