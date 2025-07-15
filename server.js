@@ -7,8 +7,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const VAPID_PUBLIC_KEY = 'BEQw0Df6M_OIXw6EzkjGHNzbQ305CiGg4mMn0N1w_K7oPewxQlWta_VFVt-vsasoPieDUX2seTpIIMrhSS2sCOM';
-const VAPID_PRIVATE_KEY = 'xBkMusdJcY5CzGRdNNcJbnwCmHpai0INiHPKjBKwCMk';
+const VAPID_PUBLIC_KEY = 'BOrSJv2UdflHTrqdYwffAE2uX4fgCmS0katvn7Sn1hh9wePoqsWA7kXCQyIOnCP1RT9KFsL8xg4OHZr-OzUjGOk';
+const VAPID_PRIVATE_KEY = 'WLBbIyDokZPBFiV5KReGN1HiFDV495MHns4N_T8QryA';
 const CONTACT_EMAIL = 'mailto:douglasbersot18@gmail.com';
 
 webpush.setVapidDetails(CONTACT_EMAIL, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
