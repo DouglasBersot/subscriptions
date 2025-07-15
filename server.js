@@ -40,18 +40,27 @@ app.post('/send-push', async (req, res) => {
     let success = 0;
     const results = [];
 
-    await Promise.all(subscriptions.map(async (sub) => {
+    await Promise.all(subscriptions.map(async ({ email, subscription }) => {
         try {
-            await webpush.sendNotification(sub, payload);
+            await webpush.sendNotification(subscription, payload);
             success++;
-            results.push({ endpoint: sub.endpoint, status: 'ok' });
+            results.push({
+                email,
+                endpoint: subscription.endpoint,
+                status: 'ok'
+            });
         } catch (err) {
-            console.warn('Erro ao enviar para um usuário:', err.statusCode, err.body || '');
-            results.push({ endpoint: sub.endpoint, status: 'fail', code: err.statusCode });
+            console.warn(`Erro ao enviar para ${email}:`, err.statusCode, err.body || '');
+            results.push({
+                email,
+                endpoint: subscription.endpoint,
+                status: 'fail',
+                code: err.statusCode
+            });
         }
     }));
 
     res.json({ sent: success, total: subscriptions.length, details: results });
 });
 
-app.listen(process.env.PORT || 3000, () => console.log('Push API rodando'));
+app.listen(process.env.PORT || 3000, () => console.log('✅ Push API rodando'));
