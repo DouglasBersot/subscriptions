@@ -27,30 +27,31 @@ app.post('/send-push', async (req, res) => {
         const response = await fetch(SUBSCRIPTIONS_URL);
         subscriptions = await response.json();
     } catch (error) {
+        console.error('Erro ao buscar subscriptions.json:', error);
         return res.status(500).json({ error: 'Falha ao buscar subscriptions.json' });
     }
 
-    const payload = JSON.stringify({
-        title,
-        body,
-        icon,
-        badge,
-        image,
-        url,
-        actions
-    });
+    if (!Array.isArray(subscriptions)) {
+        return res.status(500).json({ error: 'Formato inválido do subscriptions.json' });
+    }
+
+    const payload = JSON.stringify({ title, body, icon, badge, image, url, actions });
 
     let success = 0;
+    const results = [];
+
     await Promise.all(subscriptions.map(async (sub) => {
         try {
             await webpush.sendNotification(sub, payload);
             success++;
+            results.push({ endpoint: sub.endpoint, status: 'ok' });
         } catch (err) {
-            console.warn('Erro ao enviar para um usuário:', err.statusCode);
+            console.warn('Erro ao enviar para um usuário:', err.statusCode, err.body || '');
+            results.push({ endpoint: sub.endpoint, status: 'fail', code: err.statusCode });
         }
     }));
 
-    res.json({ sent: success, total: subscriptions.length });
+    res.json({ sent: success, total: subscriptions.length, details: results });
 });
 
 app.listen(process.env.PORT || 3000, () => console.log('Push API rodando'));
