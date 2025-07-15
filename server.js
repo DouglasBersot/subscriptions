@@ -16,8 +16,12 @@ webpush.setVapidDetails(CONTACT_EMAIL, VAPID_PUBLIC_KEY, VAPID_PRIVATE_KEY);
 const SUBSCRIPTIONS_URL = 'https://playflixtv.online/api/subscriptions.json';
 
 app.post('/send-push', async (req, res) => {
-    const { title, body } = req.body;
-    
+    const { title, body, icon, badge, image, url, actions } = req.body;
+
+    if (!title || !body) {
+        return res.status(400).json({ error: 'title e body são obrigatórios' });
+    }
+
     let subscriptions;
     try {
         const response = await fetch(SUBSCRIPTIONS_URL);
@@ -26,7 +30,15 @@ app.post('/send-push', async (req, res) => {
         return res.status(500).json({ error: 'Falha ao buscar subscriptions.json' });
     }
 
-    const payload = JSON.stringify({ title, body });
+    const payload = JSON.stringify({
+        title,
+        body,
+        icon,
+        badge,
+        image,
+        url,
+        actions
+    });
 
     let success = 0;
     await Promise.all(subscriptions.map(async (sub) => {
